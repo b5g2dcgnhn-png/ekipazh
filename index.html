@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Экипаж — автосервис в Кургане · Развал и 3D-диагностика авто</title>
+  <meta name="description" content="Автосервис «Экипаж» на ул. Дзержинского, 49 в Кургане. Развал-схождение, 3D-диагностика, ходовая часть, кузовной ремонт и покраска, ремонт двигателей и МКПП. Рейтинг 4,6 на 2ГИС, 320 оценок. Онлайн-запись." />
+  <meta name="theme-color" content="#800020" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Экипаж — автосервис в Кургане" />
+  <meta property="og:description" content="Развал и 3D-диагностика авто. Ремонт ходовой, кузовной ремонт и покраска. 4,6 на 2ГИС · 320 оценок. Онлайн-запись." />
+  <meta property="og:image" content="assets/images/ekipazh-main.jpg" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23800020'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='36' fill='white' text-anchor='middle'%3E%D0%AD%3C/text%3E%3C/svg%3E" />
+
+  <style>
+    /* ============================================================
+       БАЗОВЫЕ НАСТРОЙКИ
+       ============================================================ */
+    section[id], main[id] { scroll-margin-top: 96px; }
+
+    /* ============================================================
+       ДИЗАЙН-ТОКЕНЫ
+       ============================================================ */
+    :root {
+      --white: #FFFFFF;
+      --surface: #F8F9FA;
+      --ink: #1A1A1A;
+      --muted: #52525B;
+      --accent: #800020;
+      --accent-hover: #5C0017;
+      --line: #E4E4E7;
+      --line-soft: #EEEEF0;
+      --radius: 4px;
+      --container: 1180px;
+      --font: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body.no-scroll { overflow: hidden; }
+
+    ::selection { background: var(--accent); color: var(--white); }
+
+    img { max-width: 100%; display: block; }
+
+    a { color: inherit; text-decoration: none; }
+
+    button, input, select, textarea { font: inherit; color: inherit; }
+
+    button { cursor: pointer; }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    ul, ol { padding: 0; list-style: none; }
+
+    svg { display: block; flex: none; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: calc(var(--container) + 96px);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .section {
+      padding: clamp(68px, 8.6vw, 116px) 0;
+    }
+
+    .section--surface { background: var(--surface); }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: clamp(36px, 5vw, 60px);
+    }
+
+    .section-head > div { max-width: 720px; }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h2 {
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 600;
+      letter-spacing: -.035em;
+      line-height: 1.08;
+    }
+
+    .section-sub {
+      margin-top: 18px;
+      max-width: 610px;
+      color: var(--muted);
+      font-size: 15.5px;
+      line-height: 1.7;
+    }
+
+    .link-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      white-space: nowrap;
+      transition: color .2s ease;
+    }
+
+    .link-arrow svg { transition: transform .25s var(--ease); }
+    .link-arrow:hover { color: var(--accent-hover); }
+    .link-arrow:hover svg { transform: translateX(3px); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 0 24px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: .015em;
+      line-height: 1;
+      white-space: nowrap;
+      transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s var(--ease);
+    }
+
+    .btn svg { width: 16px; height: 16px; }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--white);
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--ink);
+    }
+
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: .6;
+      transform: none;
+    }
+
+    /* ============================================================
+       ШАПКА
+       ============================================================ */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, .92);
+      border-bottom: 1px solid var(--line-soft);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: background .25s ease, border-color .25s ease;
+    }
+
+    .site-header.is-scrolled {
+      background: rgba(255, 255, 255, .97);
+      border-bottom-color: var(--line);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      min-height: 76px;
+    }
+
+    .brand {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: none;
+    }
+
+    .brand-name {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: .17em;
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: .2em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .header-nav a:not(.btn) {
+      position: relative;
+      color: var(--muted);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: color .2s ease;
+    }
+
+    .header-nav a:not(.btn)::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -7px;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s var(--ease);
+    }
+
+    .header-nav a:not(.btn):hover { color: var(--ink); }
+    .header-nav a:not(.btn):hover::after { transform: scaleX(1); }
+
+    .header-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding-left: 24px;
+      border-left: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #9CA3AF;
+      flex: none;
+    }
+
+    .status-dot.is-open { background: var(--accent); box-shadow: 0 0 0 3px rgba(128, 0, 32, .1); }
+
+    /* ============================================================
+       ПЕРВЫЙ ЭКРАН
+       ============================================================ */
+    .hero { padding: clamp(48px, 6vw, 84px) 0 0; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      align-items: center;
+      gap: clamp(38px, 5.4vw, 76px);
+    }
+
+    .hero-copy { max-width: 610px; }
+
+    .hero h1 {
+      font-size: clamp(39px, 5.05vw, 66px);
+      font-weight: 600;
+      letter-spacing: -.045em;
+      line-height: 1.02;
+    }
+
+    .hero h1 em {
+      color: var(--accent);
+      font-style: normal;
+      white-space: nowrap;
+    }
+
+    .hero-text {
+      max-width: 520px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.35vw, 16.5px);
+      line-height: 1.72;
+    }
+
+    .hero-award {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 26px;
+      color: var(--ink);
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: .01em;
+    }
+
+    .hero-award svg { color: var(--accent); }
+
+    .rating-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 15px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+
+    .rating-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .rating-score svg { color: var(--accent); }
+
+    .rating-sep {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #C4C4CA;
+    }
+
+    .rating-line a {
+      border-bottom: 1px solid rgba(128, 0, 32, .25);
+      transition: border-color .2s ease, color .2s ease;
+    }
+
+    .rating-line a:hover { color: var(--accent); border-color: var(--accent); }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .hero-note {
+      margin-top: 18px;
+      color: #71717A;
+      font-size: 11.5px;
+      line-height: 1.5;
+    }
+
+    .hero-visual { position: relative; }
+
+    .hero-photo {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      border-radius: 2px;
+      aspect-ratio: 4 / 3.05;
+    }
+
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.1s var(--ease);
+    }
+
+    .hero-photo:hover img { transform: scale(1.015); }
+
+    .photo-tag {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      background: rgba(255, 255, 255, .94);
+      color: var(--ink);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+    }
+
+    .photo-tag svg { color: var(--accent); }
+
+    .photo-caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 12px;
+      color: #71717A;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .photo-caption a {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex: none;
+      color: var(--accent);
+      transition: color .2s ease;
+    }
+
+    .photo-caption a:hover { color: var(--accent-hover); }
+
+    .hero-facts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: clamp(44px, 6vw, 76px);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-fact {
+      padding: 20px 22px 21px 0;
+    }
+
+    .hero-fact + .hero-fact {
+      padding-left: 22px;
+      border-left: 1px solid var(--line-soft);
+    }
+
+    .hero-fact dt {
+      margin-bottom: 6px;
+      color: #8A8A93;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .hero-fact dd {
+      margin: 0;
+      color: var(--ink);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    /* ============================================================
+       УСЛУГИ
+       ============================================================ */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(28px, 4vw, 56px);
+    }
+
+    .service-group h3 {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 13px;
+      border-bottom: 1px solid var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .service-group h3 span {
+      color: #8A8A93;
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .price-list li {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+      transition: color .2s ease;
+    }
+
+    .price-list li:hover { color: var(--accent); }
+
+    .price-list .service-name {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .price-list .price {
+      flex: none;
+      color: #8A8A93;
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .price-list li:hover .price { color: var(--accent); }
+
+    .services-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 34px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .services-note svg { margin-top: 2px; color: var(--accent); }
+
+    /* ============================================================
+       ПРЕИМУЩЕСТВА
+       ============================================================ */
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--ink);
+    }
+
+    .fact {
+      position: relative;
+      padding: 28px 30px 0 0;
+    }
+
+    .fact + .fact {
+      padding-left: 30px;
+      border-left: 1px solid var(--line);
+    }
+
+    .fact-index {
+      display: block;
+      margin-bottom: 26px;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .14em;
+    }
+
+    .fact-title {
+      margin-bottom: 10px;
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -.015em;
+      line-height: 1.3;
+    }
+
+    .fact p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .fact a {
+      color: var(--accent);
+      border-bottom: 1px solid rgba(128, 0, 32, .25);
+    }
+
+    .fact a:hover { border-color: var(--accent); }
+
+    /* ============================================================
+       ОТЗЫВЫ
+       ============================================================ */
+    .reviews-summary {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: none;
+    }
+
+    .reviews-score {
+      font-size: 38px;
+      font-weight: 600;
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+
+    .reviews-score small {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .reviews-summary .summary-text {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .reviews-summary .stars { margin-bottom: 4px; }
+
+    .stars { display: inline-flex; gap: 2px; color: var(--accent); }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--ink);
+    }
+
+    .review {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      padding: 28px 28px 0 0;
+    }
+
+    .review + .review {
+      padding-left: 28px;
+      border-left: 1px solid var(--line);
+    }
+
+    .review-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .review-top .stars { color: var(--accent); }
+
+    .review-date {
+      color: #8A8A93;
+      font-size: 10px;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    .review-text {
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.72;
+    }
+
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      padding: 22px 0 26px;
+    }
+
+    .author-avatar {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #F1E6E9;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      flex: none;
+    }
+
+    .author-name {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .author-source {
+      color: #8A8A93;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .reviews-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 30px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11.5px;
+    }
+
+    /* ============================================================
+       ОНЛАЙН-ЗАПИСЬ
+       ============================================================ */
+    .booking-grid {
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      align-items: start;
+      gap: clamp(38px, 6vw, 84px);
+    }
+
+    .booking-copy {
+      position: sticky;
+      top: 108px;
+    }
+
+    .booking-copy p {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.72;
+    }
+
+    .booking-points {
+      display: grid;
+      gap: 14px;
+      margin-top: 30px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .booking-points li {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+
+    .booking-points svg {
+      margin-top: 2px;
+      color: var(--accent);
+    }
+
+    .booking-points b { color: var(--ink); font-weight: 600; }
+
+    .booking-form {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: clamp(24px, 3.4vw, 40px);
+    }
+
+    .form-title {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 16px;
+    }
+
+    .field { display: grid; gap: 7px; }
+    .field--full { grid-column: 1 / -1; }
+
+    .field label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .field label span {
+      color: #9CA3AF;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: .04em;
+      text-transform: none;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 13px;
+      background: var(--white);
+      border: 1px solid #D9D9DE;
+      border-radius: 2px;
+      color: var(--ink);
+      font-size: 13.5px;
+      line-height: 1.5;
+      transition: border-color .2s ease, box-shadow .2s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: #A1A1AA; }
+
+    .field input:hover,
+    .field select:hover,
+    .field textarea:hover { border-color: #BDBDC5; }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(128, 0, 32, .08);
+    }
+
+    .field select {
+      padding-right: 38px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2352525B' stroke-width='1.5'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      cursor: pointer;
+    }
+
+    .field select:invalid { color: #A1A1AA; }
+
+    .field textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .field.is-invalid input,
+    .field.is-invalid select,
+    .field.is-invalid textarea {
+      border-color: var(--accent);
+      background: #FFFBFB;
+    }
+
+    .field-error {
+      display: none;
+      color: var(--accent);
+      font-size: 10.5px;
+      line-height: 1.45;
+    }
+
+    .field.is-invalid .field-error { display: block; }
+
+    .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .form-privacy {
+      max-width: 290px;
+      color: #8A8A93;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .form-footer .btn { min-width: 190px; }
+
+    .btn-spinner {
+      display: none;
+      width: 15px;
+      height: 15px;
+      border: 1.5px solid rgba(255, 255, 255, .35);
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    .btn.is-loading .btn-spinner { display: block; }
+    .btn.is-loading .btn-label { display: none; }
+    .btn.is-loading svg { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .form-status {
+      display: none;
+      margin-bottom: 18px;
+      padding: 13px 15px;
+      border: 1px solid #E7C9D0;
+      border-left: 2px solid var(--accent);
+      background: #FFF7F9;
+      color: #6B001B;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .form-status.is-visible { display: block; }
+
+    .form-success {
+      padding: 18px 0 8px;
+      text-align: center;
+    }
+
+    .form-success[hidden] { display: none; }
+
+    .success-mark {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 18px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      color: var(--accent);
+    }
+
+    .form-success h3 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+      line-height: 1.25;
+    }
+
+    .form-success p {
+      max-width: 340px;
+      margin: 10px auto 22px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .form-success .btn { min-width: 190px; }
+
+    /* ============================================================
+       КОНТАКТЫ
+       ============================================================ */
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      align-items: start;
+      gap: clamp(36px, 5vw, 64px);
+    }
+
+    .contact-lead {
+      font-size: clamp(20px, 2.3vw, 27px);
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.35;
+    }
+
+    .contact-lead span { display: block; color: var(--muted); font-size: 13px; font-weight: 400; letter-spacing: 0; margin-top: 7px; }
+
+    .contact-list {
+      display: grid;
+      gap: 0;
+      margin-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+
+    .contact-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .contact-row dt {
+      color: #8A8A93;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding-top: 3px;
+    }
+
+    .contact-row dd { margin: 0; }
+
+    .contact-row a {
+      border-bottom: 1px solid transparent;
+      transition: border-color .2s ease, color .2s ease;
+    }
+
+    .contact-row a:hover { color: var(--accent); border-color: var(--accent); }
+
+    .contact-row .sub {
+      display: block;
+      margin-top: 2px;
+      color: #8A8A93;
+      font-size: 10.5px;
+      line-height: 1.45;
+    }
+
+    .phone-list { display: grid; gap: 3px; }
+
+    .messengers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+    }
+
+    .messengers a { color: var(--accent); font-weight: 500; }
+
+    .hours-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .hours-table td {
+      padding: 5px 0;
+      vertical-align: top;
+    }
+
+    .hours-table td:first-child {
+      width: 62px;
+      color: var(--muted);
+    }
+
+    .hours-table td:last-child { color: var(--ink); }
+    .hours-table tr.is-today td { color: var(--accent); font-weight: 600; }
+
+    .map-block {
+      position: sticky;
+      top: 100px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-frame {
+      position: relative;
+      height: clamp(380px, 37vw, 520px);
+      overflow: hidden;
+      background: #EAEAED;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+    }
+
+    .map-frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .map-caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 12px;
+      color: #8A8A93;
+      font-size: 10.5px;
+      line-height: 1.5;
+    }
+
+    .map-caption a {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--accent);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .map-caption a:hover { color: var(--accent-hover); }
+
+    /* ============================================================
+       ПОДВАЛ
+       ============================================================ */
+    .site-footer {
+      padding: 40px 0 34px;
+      border-top: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 30px;
+      padding-bottom: 28px;
+    }
+
+    .footer-top .brand-sub { margin-top: 5px; }
+
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 26px;
+      padding-top: 4px;
+    }
+
+    .footer-nav a {
+      color: var(--muted);
+      font-size: 12px;
+      transition: color .2s ease;
+    }
+
+    .footer-nav a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line-soft);
+      color: #8A8A93;
+      font-size: 10.5px;
+      line-height: 1.6;
+    }
+
+    .footer-bottom p { max-width: 640px; }
+
+    .footer-bottom a {
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .footer-bottom a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ============================================================
+       АНИМАЦИИ И АДАПТИВ
+       ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .7s var(--ease), transform .7s var(--ease);
+    }
+
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    @media (max-width: 1080px) {
+      .header-status { display: none; }
+      .hero-grid { gap: 40px; }
+      .services-grid { gap: 30px; }
+      .fact { padding-right: 20px; }
+      .fact + .fact { padding-left: 20px; }
+      .review { padding-right: 22px; }
+      .review + .review { padding-left: 22px; }
+    }
+
+    @media (max-width: 900px) {
+      .container { padding: 0 28px; }
+      .header-nav a:not(.btn) { display: none; }
+      .hero-grid { grid-template-columns: 1fr; gap: 42px; }
+      .hero-copy { max-width: 680px; }
+      .hero-visual { max-width: 720px; }
+      .hero-facts { grid-template-columns: 1fr 1fr; }
+      .hero-fact:nth-child(3) { border-left: 0; padding-left: 0; }
+      .hero-fact:nth-child(n+3) { border-top: 1px solid var(--line-soft); }
+      .services-grid { grid-template-columns: 1fr 1fr; gap: 36px 40px; }
+      .facts-grid { grid-template-columns: 1fr 1fr; }
+      .fact { padding: 24px 24px 26px 0; }
+      .fact + .fact { padding-left: 24px; }
+      .fact:nth-child(3) { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
+      .fact:nth-child(4) { border-top: 1px solid var(--line); }
+      .reviews-grid { grid-template-columns: 1fr; border-top: 1px solid var(--ink); }
+      .review { padding: 24px 0 0; }
+      .review + .review { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+      .review-author { padding-bottom: 24px; }
+      .booking-grid { grid-template-columns: 1fr; gap: 34px; }
+      .booking-copy { position: static; max-width: 620px; }
+      .contacts-grid { grid-template-columns: 1fr; gap: 40px; }
+      .map-block { position: static; }
+      .map-frame { height: 380px; }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .section { padding: 64px 0; }
+      .header-inner { min-height: 68px; gap: 14px; }
+      .brand-name { font-size: 16px; letter-spacing: .15em; }
+      .brand-sub { font-size: 8.5px; }
+      .header-nav { gap: 0; }
+      .header-nav .btn { min-height: 42px; padding: 0 16px; font-size: 12px; }
+      .hero { padding-top: 38px; }
+      .hero h1 { font-size: clamp(36px, 10.6vw, 46px); }
+      .hero-text { margin-top: 20px; }
+      .hero-actions { display: grid; grid-template-columns: 1fr; }
+      .hero-actions .btn { width: 100%; }
+      .hero-facts { margin-top: 42px; }
+      .hero-fact { padding: 16px 14px 17px 0; }
+      .hero-fact + .hero-fact { padding-left: 14px; }
+      .hero-fact dd { font-size: 11.5px; }
+      .section-head { display: block; margin-bottom: 32px; }
+      .section-head .link-arrow { margin-top: 16px; }
+      .reviews-summary { margin-top: 20px; }
+      .services-grid { grid-template-columns: 1fr; gap: 38px; }
+      .price-list li { padding: 12px 0; }
+      .facts-grid { grid-template-columns: 1fr; }
+      .fact { padding: 22px 0 24px; }
+      .fact + .fact { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+      .fact-index { margin-bottom: 14px; }
+      .review-top { margin-bottom: 16px; }
+      .reviews-footer { align-items: flex-start; flex-direction: column; gap: 12px; }
+      .form-grid { grid-template-columns: 1fr; gap: 15px; }
+      .field--full { grid-column: auto; }
+      .form-footer { flex-direction: column-reverse; align-items: stretch; gap: 14px; }
+      .form-privacy { max-width: none; }
+      .form-footer .btn { width: 100%; }
+      .contact-row { grid-template-columns: 82px 1fr; gap: 12px; }
+      .map-frame { height: 320px; }
+      .footer-top { flex-direction: column; gap: 20px; }
+      .footer-bottom { flex-direction: column; gap: 8px; }
+      .photo-caption { align-items: flex-start; flex-direction: column; gap: 4px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AutoRepair",
+    "name": "Экипаж, автосервис",
+    "description": "Автосервис «Экипаж» в Кургане: развал-схождение, 3D-диагностика, ремонт ходовой части, кузовной ремонт и покраска, ремонт двигателей и МКПП.",
+    "image": ["assets/images/ekipazh-main.jpg"],
+    "telephone": "+7 (3522) 545-645",
+    "email": "as.ekipag@mail.ru",
+    "url": "https://2gis.ru/kurgan/firm/1407903164677615",
+    "sameAs": ["https://2gis.ru/kurgan/firm/1407903164677615"],
+    "hasMap": "https://2gis.ru/kurgan/firm/1407903164677615",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "улица Дзержинского, 49",
+      "addressLocality": "Курган",
+      "postalCode": "640027",
+      "addressCountry": "RU"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 55.462635,
+      "longitude": 65.357375
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "08:30",
+        "closes": "12:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "13:00",
+        "closes": "17:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Saturday",
+        "opens": "09:00",
+        "closes": "12:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Saturday",
+        "opens": "12:30",
+        "closes": "15:00"
+      }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.6",
+      "ratingCount": "320",
+      "bestRating": "5"
+    },
+    "award": ["Лучший автосервис 2025", "Лучший автосервис 2026"],
+    "paymentAccepted": "Наличные, банковская карта, банковский перевод, QR-код"
+  }
+  </script>
+</head>
+<body>
+  <noscript><style>.reveal { opacity: 1; transform: none; }</style></noscript>
+  <!-- Иконки -->
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2.6 2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.4l-5.8 3.06 1.1-6.46-4.69-4.58 6.49-.94L12 2.6Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M6.6 3.5h2.2l1.5 4-1.9 1.4a13.4 13.4 0 0 0 6.7 6.7l1.4-1.9 4 1.5v2.2a2.1 2.1 0 0 1-2.3 2.1A16.8 16.8 0 0 1 4.5 5.8a2.1 2.1 0 0 1 2.1-2.3Z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M20 10c0 5.2-8 12-8 12s-8-6.8-8-12a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.7" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M12 7.5V12l3 1.8"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="m8.5 13.5-1.3 7L12 18l4.8 2.5-1.3-7"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M12 11v5m0-8.2v.2"/></symbol>
+  </svg>
+
+  <header class="site-header" id="header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="Экипаж — автосервис в Кургане, на главную">
+        <span class="brand-name">Экипаж</span>
+        <span class="brand-sub">автосервис · Курган</span>
+      </a>
+
+      <nav class="header-nav" aria-label="Основная навигация">
+        <span class="header-status">
+          <span class="status-dot" data-open-dot></span>
+          <span data-open-status-short>Пн–Пт 08:30–17:30</span>
+        </span>
+        <a href="#services">Услуги</a>
+        <a href="#reviews">Отзывы</a>
+        <a href="#contacts">Контакты</a>
+        <a class="btn btn-primary" href="#booking">Записаться</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ПЕРВЫЙ ЭКРАН -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Автосервис в Кургане · Дзержинского, 49</p>
+            <h1>Развал и 3D-диагностика авто <em>в Кургане</em></h1>
+            <p class="hero-text">
+              «Экипаж» — автосервис полного цикла на Дзержинского, 49. Ходовая часть,
+              кузовной ремонт и покраска, двигатель, диагностика и плановое обслуживание.
+              В списке авторемонта — 85 марок.
+            </p>
+
+            <div class="rating-line">
+              <span class="rating-score">
+                <svg width="15" height="15"><use href="#i-star"/></svg>
+                4,6
+              </span>
+              <span class="rating-sep" aria-hidden="true"></span>
+              <a href="https://2gis.ru/kurgan/firm/1407903164677615" target="_blank" rel="noopener noreferrer">320 оценок на 2ГИС</a>
+              <span class="rating-sep" aria-hidden="true"></span>
+              <span>250 отзывов</span>
+            </div>
+
+            <p class="hero-award">
+              <svg width="17" height="17"><use href="#i-award"/></svg>
+              Премия 2ГИС — «Лучший автосервис» 2025 и 2026
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#booking">
+                Записаться онлайн
+                <svg width="16" height="16"><use href="#i-arrow"/></svg>
+              </a>
+              <a class="btn btn-secondary" href="tel:+73522545645" data-phone-link>
+                <svg width="16" height="16"><use href="#i-phone"/></svg>
+                <span data-phone-text>+7 (3522) 545-645</span>
+              </a>
+            </div>
+            <p class="hero-note">Заявка уйдёт в Telegram — мастер уточнит детали и стоимость по вашему автомобилю.</p>
+          </div>
+
+          <figure class="hero-visual">
+            <div class="hero-photo">
+              <img src="assets/images/ekipazh-main.jpg" alt="Автосервис «Экипаж» на улице Дзержинского, 49 в Кургане — фасад здания" width="1280" height="960" fetchpriority="high" />
+              <span class="photo-tag">
+                <svg width="12" height="12"><use href="#i-pin"/></svg>
+                Дзержинского, 49
+              </span>
+            </div>
+            <figcaption class="photo-caption">
+              <span>Фото организации с 2ГИС · всего 64 фото</span>
+              <a href="https://2gis.ru/kurgan/gallery/firm/1407903164677615" target="_blank" rel="noopener noreferrer">
+                Смотреть в 2ГИС
+                <svg width="12" height="12"><use href="#i-arrow-up"/></svg>
+              </a>
+            </figcaption>
+          </figure>
+        </div>
+
+        <dl class="hero-facts">
+          <div class="hero-fact">
+            <dt>Сейчас</dt>
+            <dd><span data-open-status>Пн–Пт 08:30–17:30</span></dd>
+          </div>
+          <div class="hero-fact">
+            <dt>График</dt>
+            <dd>Пн–Пт 08:30–17:30 · Сб 09:00–15:00</dd>
+          </div>
+          <div class="hero-fact">
+            <dt>Адрес</dt>
+            <dd>Курган, ул. Дзержинского, 49 · 1 этаж</dd>
+          </div>
+          <div class="hero-fact">
+            <dt>Оплата</dt>
+            <dd>Картой, наличными, переводом, QR-коду</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- УСЛУГИ -->
+    <section class="section section--surface" id="services">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Услуги и цены</p>
+            <h2>Что делаем в «Экипаже»</h2>
+            <p class="section-sub">
+              Направления — с карточки организации на 2ГИС. Прайс-лист на странице
+              не опубликован — точную стоимость мастер уточнит при записи.
+            </p>
+          </div>
+          <a class="link-arrow" href="#booking">
+            Подобрать услугу
+            <svg width="14" height="14"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-group reveal">
+            <h3>Диагностика и ходовая <span>01</span></h3>
+            <ul class="price-list">
+              <li><span class="service-name">Развал-схождение</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">3D-диагностика автомобиля</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Компьютерная диагностика</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Ремонт ходовой части</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Ремонт стоек</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Ремонт рулевых реек</span><span class="price">Заглушка</span></li>
+            </ul>
+          </div>
+
+          <div class="service-group reveal">
+            <h3>Кузов и внешний вид <span>02</span></h3>
+            <ul class="price-list">
+              <li><span class="service-name">Восстановление геометрии кузова</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Покраска</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Полировка</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Ремонт вмятин</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Сварка</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Детейлинг</span><span class="price">Заглушка</span></li>
+            </ul>
+          </div>
+
+          <div class="service-group reveal">
+            <h3>Двигатель и обслуживание <span>03</span></h3>
+            <ul class="price-list">
+              <li><span class="service-name">Ремонт бензиновых и дизельных двигателей</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Ремонт МКПП</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Ремонт стартеров и генераторов</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Ремонт инжекторов и выхлопных систем</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Замена масла, аппаратная</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Обслуживание климатических систем</span><span class="price">Заглушка</span></li>
+              <li><span class="service-name">Установка и ремонт автостёкол</span><span class="price">Заглушка</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="services-note">
+          <svg width="15" height="15"><use href="#i-info"/></svg>
+          <span>Точную стоимость мастер подтвердит при записи — она зависит от автомобиля и объёма работ. Все цены на сайте и в карточке 2ГИС не опубликованы.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- ПРЕИМУЩЕСТВА -->
+    <section class="section" id="advantages">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Коротко о сервисе</p>
+            <h2>Факты, которые важны</h2>
+          </div>
+          <a class="link-arrow" href="https://2gis.ru/kurgan/firm/1407903164677615" target="_blank" rel="noopener noreferrer">
+            Карточка в 2ГИС
+            <svg width="14" height="14"><use href="#i-arrow-up"/></svg>
+          </a>
+        </div>
+
+        <div class="facts-grid">
+          <article class="fact reveal">
+            <span class="fact-index">01</span>
+            <h3 class="fact-title">4,6 из 5 на 2ГИС</h3>
+            <p>320 оценок и 250 отзывов клиентов. Рейтинг и отзывы — <a href="https://2gis.ru/kurgan/firm/1407903164677615/tab/reviews" target="_blank" rel="noopener noreferrer">с карточки организации</a>.</p>
+          </article>
+          <article class="fact reveal">
+            <span class="fact-index">02</span>
+            <h3 class="fact-title">Премия 2ГИС</h3>
+            <p>«Лучший автосервис 2026» и «Лучший автосервис 2025» — награды в профиле компании на 2ГИС.</p>
+          </article>
+          <article class="fact reveal">
+            <span class="fact-index">03</span>
+            <h3 class="fact-title">85 марок авто</h3>
+            <p>В списке авторемонта — от Lada (ВАЗ) и Toyota до BMW, Mercedes-Benz, Exeed и Voyah.</p>
+          </article>
+          <article class="fact reveal">
+            <span class="fact-index">04</span>
+            <h3 class="fact-title">Удобно приехать</h3>
+            <p>1 этаж, 2 парковки рядом, 290 м от остановки ПОАТ-1. Оплата картой, наличными, переводом и по QR-коду.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ОТЗЫВЫ -->
+    <section class="section section--surface" id="reviews">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Отзывы клиентов</p>
+            <h2>Что говорят в 2ГИС</h2>
+            <p class="section-sub">Реальные отзывы с карточки организации. Тексты приведены без изменений.</p>
+          </div>
+          <div class="reviews-summary">
+            <div class="reviews-score">4,6 <small>/ 5</small></div>
+            <div>
+              <div class="stars" aria-label="Рейтинг 4,6 из 5">
+                <svg width="13" height="13"><use href="#i-star"/></svg>
+                <svg width="13" height="13"><use href="#i-star"/></svg>
+                <svg width="13" height="13"><use href="#i-star"/></svg>
+                <svg width="13" height="13"><use href="#i-star"/></svg>
+                <svg width="13" height="13" style="opacity:.3"><use href="#i-star"/></svg>
+              </div>
+              <div class="summary-text">320 оценок · 250 отзывов</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reviews-grid">
+          <article class="review reveal">
+            <div class="review-top">
+              <div class="stars" aria-label="Оценка 5 из 5">
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+              </div>
+              <span class="review-date">23 ноября 2026</span>
+            </div>
+            <p class="review-text">«Загорелся чек на приборке, двигатель начал сильно троить при нагрузке. Оказалось дело в катушке зажигания и свечах. Мастера оперативно все проверили компрессометром и сканером, починили быстро и недорого»</p>
+            <footer class="review-author">
+              <span class="author-avatar" aria-hidden="true">АН</span>
+              <span>
+                <span class="author-name">Александр Никитин</span>
+                <span class="author-source">Отзыв на 2ГИС</span>
+              </span>
+            </footer>
+          </article>
+
+          <article class="review reveal">
+            <div class="review-top">
+              <div class="stars" aria-label="Оценка 5 из 5">
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+              </div>
+              <span class="review-date">21 ноября 2026</span>
+            </div>
+            <p class="review-text">«Делал полную ревизию подвески перед дальней командировкой. Поменяли передние рычаги в сборе и шаровые опоры. Ценник адекватный, лишних услуг не навязывали, все строго по делу и в оговоренный срок.»</p>
+            <footer class="review-author">
+              <span class="author-avatar" aria-hidden="true">АК</span>
+              <span>
+                <span class="author-name">Артём Козлов</span>
+                <span class="author-source">Отзыв на 2ГИС</span>
+              </span>
+            </footer>
+          </article>
+
+          <article class="review reveal">
+            <div class="review-top">
+              <div class="stars" aria-label="Оценка 5 из 5">
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+                <svg width="12" height="12"><use href="#i-star"/></svg>
+              </div>
+              <span class="review-date">19 ноября 2026</span>
+            </div>
+            <p class="review-text">«На лежачих полицейских спереди раздавался жуткий металлический скрип. Оказалось просто втулки стабилизатора износились. Поменяли за полчаса, в зоне ожидания уютно, чай попила пока ждала»</p>
+            <footer class="review-author">
+              <span class="author-avatar" aria-hidden="true">ЮС</span>
+              <span>
+                <span class="author-name">Юлия Сазонова</span>
+                <span class="author-source">Отзыв на 2ГИС</span>
+              </span>
+            </footer>
+          </article>
+        </div>
+
+        <div class="reviews-footer">
+          <span>Отзывы и оценки опубликованы на карточке организации в 2ГИС.</span>
+          <a class="link-arrow" href="https://2gis.ru/kurgan/firm/1407903164677615/tab/reviews" target="_blank" rel="noopener noreferrer">
+            Все 250 отзывов
+            <svg width="14" height="14"><use href="#i-arrow-up"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ОНЛАЙН-ЗАПИСЬ -->
+    <section class="section" id="booking">
+      <div class="container">
+        <div class="booking-grid">
+          <div class="booking-copy">
+            <p class="eyebrow">Онлайн-запись</p>
+            <h2>Записаться в «Экипаж»</h2>
+            <p>Оставьте имя, удобный способ связи и желаемое время. Заявка сразу уйдёт в Telegram автосервиса.</p>
+
+            <ul class="booking-points">
+              <li>
+                <svg width="15" height="15"><use href="#i-check"/></svg>
+                <span><b>Стоимость уточнит мастер</b> при подтверждении записи.</span>
+              </li>
+              <li>
+                <svg width="15" height="15"><use href="#i-check"/></svg>
+                <span><b>График работы:</b> Пн–Пт 08:30–17:30, Сб 09:00–15:00, Вс — выходной.</span>
+              </li>
+              <li>
+                <svg width="15" height="15"><use href="#i-check"/></svg>
+                <span><b>Связаться можно</b> по телефону или в Telegram — укажите удобный вариант в заявке.</span>
+              </li>
+            </ul>
+          </div>
+
+          <form class="booking-form" id="bookingForm" novalidate>
+            <p class="form-title">Заявка на сервис</p>
+
+            <div class="form-status" id="formStatus" role="alert"></div>
+
+            <div id="formFields">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="name">Имя <span>обязательно</span></label>
+                  <input id="name" name="name" type="text" placeholder="Как к вам обращаться" autocomplete="name" maxlength="60" required />
+                  <span class="field-error" data-error-for="name"></span>
+                </div>
+
+                <div class="field">
+                  <label for="contact">Телефон или Telegram <span>обязательно</span></label>
+                  <input id="contact" name="contact" type="text" placeholder="+7 900 000-00-00 или @username" autocomplete="tel" maxlength="60" required />
+                  <span class="field-error" data-error-for="contact"></span>
+                </div>
+
+                <div class="field field--full">
+                  <label for="service">Услуга <span>обязательно</span></label>
+                  <select id="service" name="service" required>
+                    <option value="" selected disabled>Выберите услугу</option>
+                    <option>Развал-схождение</option>
+                    <option>3D-диагностика автомобиля</option>
+                    <option>Компьютерная диагностика</option>
+                    <option>Ремонт ходовой части / стоек</option>
+                    <option>Ремонт рулевой рейки</option>
+                    <option>Кузовной ремонт / покраска</option>
+                    <option>Полировка / детейлинг</option>
+                    <option>Ремонт двигателя</option>
+                    <option>Ремонт МКПП</option>
+                    <option>Ремонт стартера / генератора</option>
+                    <option>Замена масла</option>
+                    <option>Обслуживание кондиционера</option>
+                    <option>Автостёкла</option>
+                    <option>Другое / нужна консультация</option>
+                  </select>
+                  <span class="field-error" data-error-for="service"></span>
+                </div>
+
+                <div class="field">
+                  <label for="date">Желаемая дата <span>обязательно</span></label>
+                  <input id="date" name="date" type="date" required />
+                  <span class="field-error" data-error-for="date"></span>
+                </div>
+
+                <div class="field">
+                  <label for="time">Желаемое время <span>обязательно</span></label>
+                  <input id="time" name="time" type="time" min="08:30" max="17:30" step="900" required />
+                  <span class="field-error" data-error-for="time"></span>
+                </div>
+
+                <div class="field field--full">
+                  <label for="comment">Комментарий <span>необязательно</span></label>
+                  <textarea id="comment" name="comment" placeholder="Марка и модель авто, что беспокоит, пожелания по времени" maxlength="500"></textarea>
+                  <span class="field-error" data-error-for="comment"></span>
+                </div>
+              </div>
+
+              <div class="form-footer">
+                <p class="form-privacy">Отправляя заявку, вы соглашаетесь на обработку указанных данных для связи по записи.</p>
+                <button class="btn btn-primary" type="submit" id="submitBtn">
+                  <span class="btn-spinner" aria-hidden="true"></span>
+                  <span class="btn-label">Отправить заявку</span>
+                  <svg width="16" height="16"><use href="#i-arrow"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-success" id="formSuccess" hidden>
+              <span class="success-mark">
+                <svg width="22" height="22"><use href="#i-check"/></svg>
+              </span>
+              <h3>Заявка отправлена</h3>
+              <p id="formSuccessText">Спасибо! Заявка ушла в Telegram автосервиса. Мастер свяжется с вами, чтобы подтвердить время.</p>
+              <button class="btn btn-secondary" type="button" id="newRequestBtn">Отправить ещё одну</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- КОНТАКТЫ -->
+    <section class="section section--surface" id="contacts">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Контакты</p>
+            <h2>Как нас найти</h2>
+            <p class="section-sub">Автосервис расположен на первом этаже по адресу Дзержинского, 49. Это единственный адрес «Экипажа» в Кургане.</p>
+          </div>
+          <a class="link-arrow" href="https://2gis.ru/kurgan/firm/1407903164677615" target="_blank" rel="noopener noreferrer">
+            Открыть карточку 2ГИС
+            <svg width="14" height="14"><use href="#i-arrow-up"/></svg>
+          </a>
+        </div>
+
+        <div class="contacts-grid">
+          <div>
+            <p class="contact-lead">
+              Курган, ул. Дзержинского, 49
+              <span>1 этаж · 640027</span>
+            </p>
+
+            <dl class="contact-list">
+              <div class="contact-row">
+                <dt>Телефоны</dt>
+                <dd>
+                  <div class="phone-list">
+                    <a href="tel:+73522545645" data-phone-link><span data-phone-text>+7 (3522) 545-645</span></a>
+                    <a href="tel:+73522545723">+7 (3522) 545-723</a>
+                    <a href="tel:+79091714848">+7 909 171-48-48</a>
+                    <a href="tel:+73522545350">+7 (3522) 54-53-50 <span class="sub">магазин автозапчастей</span></a>
+                  </div>
+                </dd>
+              </div>
+
+              <div class="contact-row">
+                <dt>Мессенджеры</dt>
+                <dd class="messengers">
+                  <a href="https://wa.me/79091714848" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                  <a href="https://t.me/+79091714848" target="_blank" rel="noopener noreferrer">Telegram</a>
+                  <a href="viber://chat/?number=79091714848">Viber</a>
+                </dd>
+              </div>
+
+              <div class="contact-row">
+                <dt>Email</dt>
+                <dd><a href="mailto:as.ekipag@mail.ru">as.ekipag@mail.ru</a></dd>
+              </div>
+
+              <div class="contact-row">
+                <dt>График</dt>
+                <dd>
+                  <table class="hours-table">
+                    <tr data-day="1"><td>Пн</td><td>08:30–12:00 · 13:00–17:30</td></tr>
+                    <tr data-day="2"><td>Вт</td><td>08:30–12:00 · 13:00–17:30</td></tr>
+                    <tr data-day="3"><td>Ср</td><td>08:30–12:00 · 13:00–17:30</td></tr>
+                    <tr data-day="4"><td>Чт</td><td>08:30–12:00 · 13:00–17:30</td></tr>
+                    <tr data-day="5"><td>Пт</td><td>08:30–12:00 · 13:00–17:30</td></tr>
+                    <tr data-day="6"><td>Сб</td><td>09:00–12:00 · 12:30–15:00</td></tr>
+                    <tr data-day="0"><td>Вс</td><td>Выходной</td></tr>
+                  </table>
+                </dd>
+              </div>
+
+              <div class="contact-row">
+                <dt>Оплата</dt>
+                <dd>Картой, наличными, банковским переводом, переводом с карты, по QR-коду.</dd>
+              </div>
+
+              <div class="contact-row">
+                <dt>Как добраться</dt>
+                <dd>290 м от остановки ПОАТ-1, 2 парковки рядом.<span class="sub">Вход на первом этаже здания.</span></dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="map-block">
+            <div class="map-frame">
+              <iframe
+                src="https://widgets.2gis.com/widget?type=firmsonmap&amp;options=%7B%22pos%22%3A%7B%22lat%22%3A55.462635%2C%22lon%22%3A65.357375%2C%22zoom%22%3A16%7D%2C%22opt%22%3A%7B%22city%22%3A%22kurgan%22%7D%2C%22org%22%3A%221407903164677615%22%7D"
+                title="Автосервис «Экипаж» на карте 2ГИС — Курган, улица Дзержинского, 49"
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="map-caption">
+              <span>Интерактивная карта 2ГИС · Дзержинского, 49</span>
+              <a href="https://2gis.ru/kurgan/firm/1407903164677615" target="_blank" rel="noopener noreferrer">
+                Открыть в 2ГИС
+                <svg width="12" height="12"><use href="#i-arrow-up"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <a class="brand" href="#top" aria-label="Экипаж — наверх">
+          <span class="brand-name">Экипаж</span>
+          <span class="brand-sub">Развал и 3D-диагностика авто · Курган</span>
+        </a>
+        <nav class="footer-nav" aria-label="Навигация в подвале">
+          <a href="#services">Услуги</a>
+          <a href="#advantages">О сервисе</a>
+          <a href="#reviews">Отзывы</a>
+          <a href="#booking">Онлайн-запись</a>
+          <a href="#contacts">Контакты</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="currentYear">2026</span> Автосервис «Экипаж», Курган. Данные, рейтинг, отзывы и фото — <a href="https://2gis.ru/kurgan/firm/1407903164677615" target="_blank" rel="noopener noreferrer">с карточки организации на 2ГИС</a>. Информация на сайте не является публичной офертой.</p>
+        <a href="tel:+73522545645" data-phone-link><span data-phone-text>+7 (3522) 545-645</span></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ============================================================
+       НАСТРОЙКИ ОТПРАВКИ ЗАЯВОК В TELEGRAM
+       ------------------------------------------------------------
+       1) TG_BOT_TOKEN — токен бота, который выдаёт @BotFather.
+          Откройте @BotFather в Telegram → /newbot → придумайте имя
+          и username бота → скопируйте строку вида
+          1234567890:AAH... в кавычки ниже.
+
+       2) TG_CHAT_ID — куда приходят заявки. Проще всего — личный
+          чат владельца: нажмите «Start» у своего бота (бот не
+          может написать первым), затем откройте
+          https://api.telegram.org/bot<ТОКЕН>/getUpdates
+          и возьмите message.chat.id (например, 123456789).
+          Этот же ID показывает @userinfobot. Группа или канал
+          тоже подойдут: для них ID начинается с -100..., а бота
+          нужно добавить в чат (в канал — администратором).
+
+       3) PHONE_NUMBER — телефон организации для кнопок и сообщений.
+          Полный номер на карточке 2ГИС: +7 (3522) 545-645.
+
+       После заполнения констант форма начнёт отправлять заявки
+       напрямую в Telegram Bot API. Если токен и chat_id пустые,
+       сайт покажет понятное сообщение о том, что запись
+       ещё не подключена.
+
+       ВАЖНО ДЛЯ ПРОДАКШЕНА: токен в клиентском коде виден всем.
+       Для публичного сайта лучше отправлять заявки через свой
+       backend или serverless-функцию, которая хранит токен.
+       ============================================================ */
+    const TG_BOT_TOKEN = ""; // Пример: "1234567890:AAH..."
+    const TG_CHAT_ID = "";   // Пример: "123456789" или "-1001234567890"
+    const PHONE_NUMBER = "+7 (3522) 545-645";
+
+    /* ============================================================
+       РЕЖИМ РАБОТЫ ИЗ КАРТОЧКИ 2ГИС
+       Пн–Пт: 08:30–12:00, 13:00–17:30
+       Сб:    09:00–12:00, 12:30–15:00
+       Вс:    выходной
+       ============================================================ */
+    const SCHEDULE = {
+      0: [],
+      1: [["08:30", "12:00"], ["13:00", "17:30"]],
+      2: [["08:30", "12:00"], ["13:00", "17:30"]],
+      3: [["08:30", "12:00"], ["13:00", "17:30"]],
+      4: [["08:30", "12:00"], ["13:00", "17:30"]],
+      5: [["08:30", "12:00"], ["13:00", "17:30"]],
+      6: [["09:00", "12:00"], ["12:30", "15:00"]]
+    };
+    const DAY_NAMES = ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"];
+
+    (() => {
+      "use strict";
+
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+      /* ---------- Вспомогательные функции ---------- */
+      const pad = (value) => String(value).padStart(2, "0");
+      const toMinutes = (time) => {
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours * 60 + minutes;
+      };
+
+      function getKurganNow(date = new Date()) {
+        const parts = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Asia/Yekaterinburg",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          weekday: "short",
+          hour12: false
+        }).formatToParts(date);
+
+        const get = (type) => parts.find((part) => part.type === type)?.value;
+        const weekdays = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+
+        return {
+          year: Number(get("year")),
+          month: Number(get("month")),
+          day: Number(get("day")),
+          hours: Number(get("hour")) % 24,
+          minutes: Number(get("minute")),
+          weekday: weekdays[get("weekday")],
+          dateString: `${get("year")}-${get("month")}-${get("day")}`
+        };
+      }
+
+      function getOpenState(now) {
+        const current = now.hours * 60 + now.minutes;
+        const today = SCHEDULE[now.weekday] || [];
+
+        for (const [from, to] of today) {
+          if (current >= toMinutes(from) && current < toMinutes(to)) {
+            return { open: true, text: `Открыто до ${to}`, short: `Открыто до ${to}` };
+          }
+        }
+
+        for (const [from] of today) {
+          if (current < toMinutes(from)) {
+            return { open: false, text: `Закрыто · откроется в ${from}`, short: `Закрыто · в ${from}` };
+          }
+        }
+
+        for (let step = 1; step <= 7; step += 1) {
+          const weekday = (now.weekday + step) % 7;
+          const intervals = SCHEDULE[weekday] || [];
+          if (intervals.length) {
+            const label = step === 1 ? "завтра" : DAY_NAMES[weekday];
+            return {
+              open: false,
+              text: `Закрыто · откроется ${label} в ${intervals[0][0]}`,
+              short: `Закрыто · ${label} в ${intervals[0][0]}`
+            };
+          }
+        }
+
+        return { open: false, text: "Закрыто", short: "Закрыто" };
+      }
+
+      function updateScheduleUI() {
+        const now = getKurganNow();
+        const state = getOpenState(now);
+
+        $$("[data-open-status]").forEach((element) => {
+          element.textContent = state.text;
+        });
+
+        $$("[data-open-status-short]").forEach((element) => {
+          element.textContent = state.short;
+        });
+
+        $$("[data-open-dot]").forEach((element) => {
+          element.classList.toggle("is-open", state.open);
+        });
+
+        $$(".hours-table tr[data-day]").forEach((row) => {
+          row.classList.toggle("is-today", Number(row.dataset.day) === now.weekday);
+        });
+
+        return now;
+      }
+
+      function formatDateHuman(dateString) {
+        const [year, month, day] = dateString.split("-").map(Number);
+        return new Intl.DateTimeFormat("ru-RU", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          timeZone: "UTC"
+        }).format(new Date(Date.UTC(year, month - 1, day)));
+      }
+
+      function escapeHtml(value) {
+        const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+        return String(value).replace(/[&<>"']/g, (character) => map[character]);
+      }
+
+      /* ---------- Телефон из константы ---------- */
+      $$("[data-phone-text]").forEach((element) => {
+        element.textContent = PHONE_NUMBER;
+      });
+      $$("[data-phone-link]").forEach((element) => {
+        element.href = `tel:${PHONE_NUMBER.replace(/[^\d+]/g, "")}`;
+      });
+
+      /* ---------- Год в подвале ---------- */
+      const yearElement = $("#currentYear");
+      if (yearElement) yearElement.textContent = String(new Date().getFullYear());
+
+      /* ---------- Статус работы ---------- */
+      const now = updateScheduleUI();
+      window.setInterval(updateScheduleUI, 60 * 1000);
+
+      /* ---------- Шапка при скролле ---------- */
+      const header = $("#header");
+      const onScroll = () => header?.classList.toggle("is-scrolled", window.scrollY > 8);
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      /* ---------- Появление секций ---------- */
+      const revealItems = $$(".reveal");
+      if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+        revealItems.forEach((item) => observer.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add("is-visible"));
+      }
+
+      /* ---------- Форма записи ---------- */
+      const form = $("#bookingForm");
+      if (!form) return;
+
+      const fields = $("#formFields");
+      const status = $("#formStatus");
+      const success = $("#formSuccess");
+      const successText = $("#formSuccessText");
+      const submitButton = $("#submitBtn");
+      const newRequestButton = $("#newRequestBtn");
+      const nameInput = $("#name");
+      const contactInput = $("#contact");
+      const serviceInput = $("#service");
+      const dateInput = $("#date");
+      const timeInput = $("#time");
+      const commentInput = $("#comment");
+
+      const todayString = `${now.year}-${pad(now.month)}-${pad(now.day)}`;
+      dateInput.min = todayString;
+
+      let isSubmitting = false;
+
+      function clearErrors() {
+        $$(".field", form).forEach((field) => field.classList.remove("is-invalid"));
+        $$("[data-error-for]", form).forEach((error) => { error.textContent = ""; });
+      }
+
+      function setError(name, message) {
+        const errorElement = $(`[data-error-for="${name}"]`, form);
+        if (!errorElement) return;
+        errorElement.textContent = message;
+        errorElement.closest(".field")?.classList.add("is-invalid");
+      }
+
+      function showStatus(message) {
+        status.textContent = message;
+        status.classList.add("is-visible");
+      }
+
+      function hideStatus() {
+        status.textContent = "";
+        status.classList.remove("is-visible");
+      }
+
+      function setLoading(loading) {
+        submitButton.disabled = loading;
+        submitButton.classList.toggle("is-loading", loading);
+      }
+
+      function normalizePhone(value) {
+        let digits = value.replace(/\D/g, "");
+        if (digits.length === 11 && digits.startsWith("8")) digits = `7${digits.slice(1)}`;
+        return digits;
+      }
+
+      function validateForm() {
+        clearErrors();
+        let firstInvalid = null;
+        const name = nameInput.value.trim();
+        const contact = contactInput.value.trim();
+        const service = serviceInput.value;
+        const date = dateInput.value;
+        const time = timeInput.value;
+        const comment = commentInput.value.trim();
+
+        if (name.length < 2) {
+          setError("name", "Укажите имя — минимум 2 символа.");
+          firstInvalid = firstInvalid || nameInput;
+        }
+
+        const isTelegram = /^@[A-Za-z0-9_]{4,32}$/.test(contact);
+        const isPhone = /^[+]?[\d\s()\-]{7,24}$/.test(contact) && normalizePhone(contact).length >= 10;
+        if (!contact) {
+          setError("contact", "Оставьте телефон или Telegram для связи.");
+          firstInvalid = firstInvalid || contactInput;
+        } else if (!isTelegram && !isPhone) {
+          setError("contact", "Введите телефон или Telegram в формате @username.");
+          firstInvalid = firstInvalid || contactInput;
+        }
+
+        if (!service) {
+          setError("service", "Выберите услугу из списка.");
+          firstInvalid = firstInvalid || serviceInput;
+        }
+
+        if (!date) {
+          setError("date", "Выберите желаемую дату.");
+          firstInvalid = firstInvalid || dateInput;
+        } else {
+          const [year, month, day] = date.split("-").map(Number);
+          const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+          if (date < todayString) {
+            setError("date", "Дата уже прошла — выберите другой день.");
+            firstInvalid = firstInvalid || dateInput;
+          } else if (weekday === 0) {
+            setError("date", "В воскресенье сервис не работает. Выберите другой день.");
+            firstInvalid = firstInvalid || dateInput;
+          }
+        }
+
+        if (!time) {
+          setError("time", "Укажите удобное время.");
+          firstInvalid = firstInvalid || timeInput;
+        } else if (date === todayString && toMinutes(time) <= now.hours * 60 + now.minutes) {
+          setError("time", "Это время уже прошло — выберите более позднее.");
+          firstInvalid = firstInvalid || timeInput;
+        }
+
+        if (comment.length > 500) {
+          setError("comment", "Комментарий не должен превышать 500 символов.");
+          firstInvalid = firstInvalid || commentInput;
+        }
+
+        if (firstInvalid) {
+          firstInvalid.focus({ preventScroll: false });
+          return null;
+        }
+
+        return { name, contact, service, date, time, comment };
+      }
+
+      function buildTelegramMessage(data) {
+        const lines = [
+          "<b>Новая заявка с сайта «Экипаж»</b>",
+          "",
+          `<b>Имя:</b> ${escapeHtml(data.name)}`,
+          `<b>Контакт:</b> ${escapeHtml(data.contact)}`,
+          `<b>Услуга:</b> ${escapeHtml(data.service)}`,
+          `<b>Дата:</b> ${escapeHtml(formatDateHuman(data.date))}`,
+          `<b>Время:</b> ${escapeHtml(data.time)}`
+        ];
+
+        if (data.comment) lines.push(`<b>Комментарий:</b> ${escapeHtml(data.comment)}`);
+
+        const sentAt = new Intl.DateTimeFormat("ru-RU", {
+          timeZone: "Asia/Yekaterinburg",
+          dateStyle: "short",
+          timeStyle: "short"
+        }).format(new Date());
+
+        lines.push("", `<i>Отправлено: ${escapeHtml(sentAt)} (Курган)</i>`);
+        return lines.join("\n");
+      }
+
+      async function sendToTelegram(data) {
+        const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TG_CHAT_ID,
+            text: buildTelegramMessage(data),
+            parse_mode: "HTML",
+            disable_web_page_preview: true
+          })
+        });
+
+        let result = null;
+        try {
+          result = await response.json();
+        } catch (error) {
+          result = null;
+        }
+
+        if (!response.ok || !result || result.ok !== true) {
+          const description = result?.description || `HTTP ${response.status}`;
+          throw new Error(description);
+        }
+
+        return result;
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (isSubmitting) return;
+
+        hideStatus();
+        const data = validateForm();
+        if (!data) return;
+
+        if (!TG_BOT_TOKEN || !TG_CHAT_ID) {
+          showStatus("Онлайн-запись ещё не подключена.");
+          return;
+        }
+
+        isSubmitting = true;
+        setLoading(true);
+
+        try {
+          await sendToTelegram(data);
+
+          successText.textContent = `Спасибо, ${data.name}! Заявка ушла в Telegram автосервиса: ${formatDateHuman(data.date)} в ${data.time}. Мастер свяжется с вами, чтобы подтвердить время.`;
+          fields.hidden = true;
+          success.hidden = false;
+          form.reset();
+        } catch (error) {
+          const description = error instanceof Error ? error.message : "неизвестная ошибка";
+          showStatus(`Не удалось отправить заявку. ${description}. Попробуйте ещё раз или позвоните по телефону ${PHONE_NUMBER}.`);
+        } finally {
+          isSubmitting = false;
+          setLoading(false);
+        }
+      });
+
+      newRequestButton?.addEventListener("click", () => {
+        success.hidden = true;
+        fields.hidden = false;
+        hideStatus();
+        clearErrors();
+        form.reset();
+        dateInput.min = todayString;
+        nameInput.focus();
+      });
+
+      $$("input, select, textarea", form).forEach((field) => {
+        const reset = () => {
+          field.closest(".field")?.classList.remove("is-invalid");
+          const errorElement = $(`[data-error-for="${field.name}"]`, form);
+          if (errorElement) errorElement.textContent = "";
+        };
+        field.addEventListener("input", reset);
+        field.addEventListener("change", reset);
+      });
+    })();
+  </script>
+</body>
+</html>
